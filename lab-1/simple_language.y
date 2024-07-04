@@ -4,6 +4,12 @@
 #include <string.h>
 %}
 
+// Define YYSTYPE
+%union {
+    char *str;
+    int num;
+}
+
 %token NUMBER
 %token ID
 %token PLUS MINUS MULTIPLY DIVIDE EQUAL ENTER
@@ -22,7 +28,7 @@ statement: assignment
          ;
 
 assignment: ID EQUAL expression
-          { printf("Assign %s = %d\n", $1, $3); }
+          { printf("Assign %s = %d\n", yylval.str, yyval.num); }
           ;
 
 expression: NUMBER
