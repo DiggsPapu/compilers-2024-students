@@ -6,6 +6,7 @@
 
 %token NUMBER
 %token ID
+%token PLUS MINUS MULTIPLY DIVIDE EQUAL ENTER
 
 %%
 
@@ -20,16 +21,16 @@ statement: assignment
          | expression
          ;
 
-assignment: ID '=' expression
+assignment: ID EQUAL expression
           { printf("Assign %s = %d\n", $1, $3); }
           ;
 
 expression: NUMBER
           | ID
-          | expression '+' expression
-          | expression '-' expression
-          | expression '*' expression
-          | expression '/' expression
+          | expression PLUS expression
+          | expression MINUS expression
+          | expression MULTIPLY expression
+          | expression DIVIDE expression
           ;
 
 %%
