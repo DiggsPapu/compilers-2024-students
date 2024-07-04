@@ -4,7 +4,6 @@
 #include <string.h>
 %}
 
-// Define YYSTYPE
 %union {
     char *str;
     int num;
@@ -27,8 +26,8 @@ statement: assignment
          | expression
          ;
 
-assignment: ID EQUAL expression
-          { printf("Assign %s = %d\n", yylval.str, yyval.num); }
+assignment: ID EQUAL expression ENTER
+          { printf("Assign %s = %d\n", &yylval.str, yylval.num); }
           ;
 
 expression: NUMBER
@@ -45,8 +44,7 @@ int main() {
     yyparse();
     return 0;
 }
-
-int yyerror(const char *s) {
-    printf("Error: %s\n", s);
-    return 0;
+void yyerror(const char *str)
+{
+        fprintf(stderr,"error: %s\n",str);
 }
