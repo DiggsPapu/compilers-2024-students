@@ -1,6 +1,7 @@
 %{
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "simple_language.tab.h"
 %}
 
@@ -15,8 +16,12 @@ ENTER "\n"
 TAB [ \t]
 
 %%
-{ID}        { yylval.str = strdup(yytext); return ID; }
-{NUMBER}    { yylval.num = atoi(yytext); return NUMBER; }
+{ID}        {   const char* original = yytext;
+                yylval.str = strdup(original);
+                return ID; 
+            }
+{NUMBER}    {   
+                yylval.num = atoi(yytext); return NUMBER; }
 {PLUS}      { return PLUS; }
 {MINUS}     { return MINUS; }
 {MULTIPLY}  { return MULTIPLY; }
