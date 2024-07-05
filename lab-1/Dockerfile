@@ -20,8 +20,8 @@ COPY . .
 RUN flex simple_language.lex
 # This command doesn't work while compiling bc it doesn't generate the y.tab.h file so instead use yacc
 # RUN bison -d simple_language.y
-RUN bison -d simple_language.y
-RUN gcc lex.yy.c simple_language.tab.c -o compiler
+RUN yacc -d simple_language.y
+RUN gcc lex.yy.c y.tab.c -o compiler
 
 # Run the compiler
 CMD ["./compiler"]

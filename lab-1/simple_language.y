@@ -15,7 +15,7 @@
 %token <num> NUMBER
 %token <str> ID
 %token PLUS MINUS MULTIPLY DIVIDE EQUAL ENTER
-
+%type <num> expression
 %%
 
 program: statement_list ENTER
@@ -38,10 +38,10 @@ assignment: ID EQUAL expression
 
 expression: NUMBER
           | ID
-          | expression PLUS expression
-          | expression MINUS expression
-          | expression MULTIPLY expression
-          | expression DIVIDE expression
+          | expression PLUS expression {$$ = $1 + $3;printf("%d+%d=%d\n",$1,$3,$$);}
+          | expression MINUS expression {$$ = $1 - $3;printf("%d-%d=%d\n",$1,$3,$$);}
+          | expression MULTIPLY expression {$$ = $1 * $3;printf("%d*%d=%d\n",$1,$3,$$);}
+          | expression DIVIDE expression {$$ = $1 / $3;printf("%d/%d=%f\n",$1,$3,$$);}
           ;
 
 %%

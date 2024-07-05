@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "simple_language.tab.h"
+#include "y.tab.h"
 %}
 
 ID [a-zA-Z][a-zA-Z0-9]*
@@ -20,8 +20,7 @@ TAB [ \t]
                 yylval.str = strdup(original);
                 return ID; 
             }
-{NUMBER}    {   
-                yylval.num = atoi(yytext); return NUMBER; }
+{NUMBER}    {  yylval.num = atoi(yytext); return NUMBER; }
 {PLUS}      { return PLUS; }
 {MINUS}     { return MINUS; }
 {MULTIPLY}  { return MULTIPLY; }
