@@ -1,16 +1,18 @@
 import sys
 from antlr4 import *
-from MiniLangLexer import MiniLangLexer
-from MiniLangParser import MiniLangParser
+from MiniLangLexer import *
+from MiniLangParser import *
+from MiniLangListener import *
 
 def main(argv):
-    # String of input
-    input_stream = FileStream(argv[1])
+    input_stream = FileStream('program/program_test.txt')
     lexer = MiniLangLexer(input_stream)
     stream = CommonTokenStream(lexer)
     parser = MiniLangParser(stream)
     tree = parser.prog()  # We are using 'prog' since this is the starting rule based on our MiniLang grammar, yay!
-    print(tree.toStringTree(recog=parser))
-
+    listener = MiniLangListener()
+    walker = ParseTreeWalker()
+    walker.walk(listener, tree)
+    
 if __name__ == '__main__':
     main(sys.argv)

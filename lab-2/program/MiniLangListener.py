@@ -1,15 +1,27 @@
+from Stack import Stack
 # Generated from MiniLang.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
     from .MiniLangParser import MiniLangParser
 else:
     from MiniLangParser import MiniLangParser
+# operations 0->assign 1->sum 2->resta 3-> mult 4-> div
 
 # This class defines a complete listener for a parse tree produced by MiniLangParser.
 class MiniLangListener(ParseTreeListener):
-
+    def __init__(self):
+        self.lastOp = None
+        self.right = None
+        self.left = None
+        self.result = None
+        self.stackOperation = Stack()
+        self.stackNum = Stack()
+        self.head = None
+        self.value = None
+        self.assigned = {}
     # Enter a parse tree produced by MiniLangParser#prog.
     def enterProg(self, ctx:MiniLangParser.ProgContext):
+        print(ctx.getText())
         pass
 
     # Exit a parse tree produced by MiniLangParser#prog.
@@ -19,19 +31,44 @@ class MiniLangListener(ParseTreeListener):
 
     # Enter a parse tree produced by MiniLangParser#printExpr.
     def enterPrintExpr(self, ctx:MiniLangParser.PrintExprContext):
+        print(ctx.getText())
         pass
 
     # Exit a parse tree produced by MiniLangParser#printExpr.
     def exitPrintExpr(self, ctx:MiniLangParser.PrintExprContext):
+        self.right = None
+        self.left = None
+        self.result = None
+        # Asignacion
+        if self.lastOp == 0:
+            print(self.assigned[self.head]," assigned in ",self.head)
+            self.head = None
+        # Operaciones
+        else:
+            print("Resultado: ", self.stackNum.pop())
+        self.lastOp = None
         pass
 
 
     # Enter a parse tree produced by MiniLangParser#assign.
     def enterAssign(self, ctx:MiniLangParser.AssignContext):
+        # Insert a assign operation -> 0
+        self.stackOperation.push(0)
+        self.head = ctx.getChild(0).getText()
+        self.lastOp = 0
         pass
 
     # Exit a parse tree produced by MiniLangParser#assign.
     def exitAssign(self, ctx:MiniLangParser.AssignContext):
+        # En caso de que sea una operacion se asigna el valor de la operacion a la memoria 
+        if self.lastOp != 0:
+            self.assigned[self.head] = self.stackNum.pop()
+        # En caso de que solo sea una asignacion entonces se le asigna el valor a la memoria
+        else:
+            self.assigned[self.head] = self.value
+        self.lastOp = self.stackOperation.pop()
+        print(self.assigned[self.head]," assigned in ",self.head)
+        self.value = None
         pass
 
 
@@ -55,24 +92,61 @@ class MiniLangListener(ParseTreeListener):
 
     # Enter a parse tree produced by MiniLangParser#MulDiv.
     def enterMulDiv(self, ctx:MiniLangParser.MulDivContext):
+        if ctx.getChild(1).getText() == '*':
+            self.stackOperation.push(3)
+        elif ctx.getChild(1).getText() == '/':
+            self.stackOperation.push(4)
         pass
 
     # Exit a parse tree produced by MiniLangParser#MulDiv.
     def exitMulDiv(self, ctx:MiniLangParser.MulDivContext):
+        self.lastOp = self.stackOperation.pop()
+        right = self.stackNum.pop()
+        left = self.stackNum.pop()
+        # operacion de salida del arbol
+        if self.lastOp == 3:
+            self.stackNum.push( left * right )
+            
+        elif self.lastOp == 4:
+            self.stackNum.push( left / right )
         pass
 
 
     # Enter a parse tree produced by MiniLangParser#AddSub.
     def enterAddSub(self, ctx:MiniLangParser.AddSubContext):
+        if ctx.getChild(1).getText() == '+':
+            self.stackOperation.push(1)
+        elif ctx.getChild(1).getText() == '-':
+            self.stackOperation.push(2)
         pass
 
     # Exit a parse tree produced by MiniLangParser#AddSub.
     def exitAddSub(self, ctx:MiniLangParser.AddSubContext):
+        self.lastOp = self.stackOperation.pop()
+        right = self.stackNum.pop()
+        left = self.stackNum.pop()
+        # operacion de salida del arbol
+        if self.lastOp == 1:
+            self.stackNum.push( left + right )
+            
+        elif self.lastOp == 2:
+            self.stackNum.push( left - right )
         pass
 
 
     # Enter a parse tree produced by MiniLangParser#id.
     def enterId(self, ctx:MiniLangParser.IdContext):
+        # En caso de que sea una operacion hay que ir a buscar a memoria para ver las variables
+        if self.stackOperation.peek() != 0:
+            # Si no se encuentra la variable entonces se lanza error
+            self.stackNum.push(self.assigned[ctx.getText()])
+        # En caso de que sea una asignacion
+        else:
+            # Si es el nombre de la variable
+            if self.head == None:
+                self.head = ctx.getText()
+            else:
+                self.value = ctx.getText()
         pass
 
     # Exit a parse tree produced by MiniLangParser#id.
@@ -82,11 +156,18 @@ class MiniLangListener(ParseTreeListener):
 
     # Enter a parse tree produced by MiniLangParser#int.
     def enterInt(self, ctx:MiniLangParser.IntContext):
+        # Si solo es una asignacion entonces solo se asigna al valor
+        if self.stackOperation.peek() == 0:
+            self.value = int(ctx.getText())
+        # Si es una operacion se va a poner en el stack de numeros para operar
+        else:
+            self.stackNum.push(int(ctx.getText()))
         pass
 
     # Exit a parse tree produced by MiniLangParser#int.
     def exitInt(self, ctx:MiniLangParser.IntContext):
         pass
+        
 
 
 
