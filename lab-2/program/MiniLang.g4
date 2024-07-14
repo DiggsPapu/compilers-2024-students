@@ -21,7 +21,7 @@ comparation: expr COMPARATOR expr
     |   '(' expr COMPARATOR expr ')'
     ;
 
-stmt: ('while'|'if') comparation ':' expr;
+stmt: ('while'|'if') comparation ':' stat;
 
 COMMENT : '#' ~[\r\n]* ; // define token for comments
 MUL : '*' ; // define token for multiplication

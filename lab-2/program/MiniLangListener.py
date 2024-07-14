@@ -61,6 +61,9 @@ class MiniLangListener(ParseTreeListener):
             else:
                 print("Resultado: ", self.stackNum.pop())
             self.lastOp = None
+        command = f'global {self.head}\n{self.head}={self.assigned[self.head]}'
+            # Create/update variables in the context
+        exec(command)
         pass
 
 
@@ -91,6 +94,9 @@ class MiniLangListener(ParseTreeListener):
                 self.assigned[self.head] = self.value
         self.lastOp = self.stackOperation.pop()
         print(self.assigned[self.head]," assigned in ",self.head)
+        command = f'global {self.head} \n{self.head}={self.assigned[self.head]}'
+            # Create/update variables in the context
+        exec(command)
         self.value = None
         pass
 
@@ -134,17 +140,20 @@ class MiniLangListener(ParseTreeListener):
     # Exit a parse tree produced by MiniLangParser#MulDiv.
     def exitMulDiv(self, ctx:MiniLangParser.MulDivContext):
         self.lastOp = self.stackOperation.pop()
-        right = self.stackNum.pop()
-        left = self.stackNum.pop()
         if (self.stackOperation.stack.count(6)>0 or self.stackOperation.stack.count(7))>0:
             if (self.comparison):
+                right = self.stackNum.pop()
+                left = self.stackNum.pop()
                 # operacion de salida del arbol
                 if self.lastOp == 3:
                     self.stackNum.push( left * right )
                     
                 elif self.lastOp == 4:
                     self.stackNum.push( left / right )
+                print(self.stackNum.peek())
         else:
+            right = self.stackNum.pop()
+            left = self.stackNum.pop()
             # operacion de salida del arbol
             if self.lastOp == 3:
                 self.stackNum.push( left * right )
@@ -165,17 +174,20 @@ class MiniLangListener(ParseTreeListener):
     # Exit a parse tree produced by MiniLangParser#AddSub.
     def exitAddSub(self, ctx:MiniLangParser.AddSubContext):
         self.lastOp = self.stackOperation.pop()
-        right = self.stackNum.pop()
-        left = self.stackNum.pop()
         if (self.stackOperation.stack.count(6)>0 or self.stackOperation.stack.count(7))>0:
             if (self.comparison):
+                right = self.stackNum.pop()
+                left = self.stackNum.pop()
                 # operacion de salida del arbol
                 if self.lastOp == 1:
                     self.stackNum.push( left + right )
                     
                 elif self.lastOp == 2:
                     self.stackNum.push( left - right )
+                print(self.stackNum.peek())
         else:
+            right = self.stackNum.pop()
+            left = self.stackNum.pop()
             # operacion de salida del arbol
             if self.lastOp == 1:
                 self.stackNum.push( left + right )
@@ -277,7 +289,11 @@ class MiniLangListener(ParseTreeListener):
     
     # Enter a parse tree produced by MiniLangParser#comparation.
     def enterComparation(self, ctx:MiniLangParser.ComparationContext):
-        self.comparison = eval(ctx.getText())
+        for variable in list(self.assigned.keys()):
+            command = f'global {variable}\n{variable}={self.assigned[variable]}'
+            # Create/update variables in the context
+            exec(command)
+        self.comparison = exec(ctx.getText())
         pass
 
     # Exit a parse tree produced by MiniLangParser#comparation.
@@ -286,24 +302,31 @@ class MiniLangListener(ParseTreeListener):
     
         # Enter a parse tree produced by MiniLangParser#condStmt.
     def enterCondStmt(self, ctx:MiniLangParser.CondStmtContext):
+        # Indica que tipo de statement es if o while
+        if ctx.getChild(0).getChild(0).getText()=="if":
+            self.stackOperation.push(6)
+        else:
+            self.stackOperation.push(7)
+            text = ctx.getText()
+            values = text.split(':')
+            text = values[0]+':\n'
+            for index in range(1, len(values)):
+                text+=f' {values[index]}\n'
+            exec(text)
         pass
 
     # Exit a parse tree produced by MiniLangParser#condStmt.
     def exitCondStmt(self, ctx:MiniLangParser.CondStmtContext):
+        # En caso de que sea un while entonces hay que ejecutario muchas veces.
+        operation = self.stackOperation.pop()
         pass
     
     # Enter a parse tree produced by MiniLangParser#stmt.
     def enterStmt(self, ctx:MiniLangParser.StmtContext):
-        # Indica que tipo de statement es if o while
-        if ctx.getChild(0).getText()=="if":
-            self.stackOperation.push(6)
-        else:
-            self.stackOperation.push(7)
         pass
 
     # Exit a parse tree produced by MiniLangParser#stmt.
     def exitStmt(self, ctx:MiniLangParser.StmtContext):
-        
         pass
 
 

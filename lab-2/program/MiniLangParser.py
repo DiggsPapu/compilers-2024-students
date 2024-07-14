@@ -31,7 +31,7 @@ def serializedATN():
         0,52,53,3,4,2,0,53,54,5,16,0,0,54,55,3,4,2,0,55,63,1,0,0,0,56,57,
         5,2,0,0,57,58,3,4,2,0,58,59,5,16,0,0,59,60,3,4,2,0,60,61,5,3,0,0,
         61,63,1,0,0,0,62,52,1,0,0,0,62,56,1,0,0,0,63,7,1,0,0,0,64,65,7,2,
-        0,0,65,66,3,6,3,0,66,67,5,6,0,0,67,68,3,4,2,0,68,9,1,0,0,0,6,13,
+        0,0,65,66,3,6,3,0,66,67,5,6,0,0,67,68,3,2,1,0,68,9,1,0,0,0,6,13,
         30,39,47,49,62
     ]
 
@@ -668,8 +668,8 @@ class MiniLangParser ( Parser ):
             return self.getTypedRuleContext(MiniLangParser.ComparationContext,0)
 
 
-        def expr(self):
-            return self.getTypedRuleContext(MiniLangParser.ExprContext,0)
+        def stat(self):
+            return self.getTypedRuleContext(MiniLangParser.StatContext,0)
 
 
         def getRuleIndex(self):
@@ -705,7 +705,7 @@ class MiniLangParser ( Parser ):
             self.state = 66
             self.match(MiniLangParser.T__5)
             self.state = 67
-            self.expr(0)
+            self.stat()
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
