@@ -52,18 +52,23 @@ class MiniLangListener(ParseTreeListener):
                 # Operaciones
                 else:
                     print("Resultado: ", self.stackNum.pop())
+        elif self.stackOperation.stack.count(8)>0:
+            pass
         else:
             # Asignacion
             if self.lastOp == 0:
                 print(self.assigned[self.head]," assigned in ",self.head)
+                command = f'global {self.head}\n{self.head}={self.assigned[self.head]}'
+                # Create/update variables in the context
+                exec(command)
                 self.head = None
+                self.lastOp = None
+            elif self.stackOperation.stack.count(8)>0 or self.lastOp == 8:
+                pass
             # Operaciones
             else:
                 print("Resultado: ", self.stackNum.pop())
-            self.lastOp = None
-        command = f'global {self.head}\n{self.head}={self.assigned[self.head]}'
-            # Create/update variables in the context
-        exec(command)
+                self.lastOp = None
         pass
 
 
@@ -85,6 +90,8 @@ class MiniLangListener(ParseTreeListener):
                 # En caso de que solo sea una asignacion entonces se le asigna el valor a la memoria
                 else:
                     self.assigned[self.head] = self.value
+        elif self.stackOperation.stack.count(8)>0:
+            pass
         else:
             # En caso de que sea una operacion se asigna el valor de la operacion a la memoria 
             if self.lastOp != 0:
@@ -151,6 +158,8 @@ class MiniLangListener(ParseTreeListener):
                 elif self.lastOp == 4:
                     self.stackNum.push( left / right )
                 print(self.stackNum.peek())
+        elif self.stackOperation.stack.count(8)>0:
+            pass
         else:
             right = self.stackNum.pop()
             left = self.stackNum.pop()
@@ -185,6 +194,8 @@ class MiniLangListener(ParseTreeListener):
                 elif self.lastOp == 2:
                     self.stackNum.push( left - right )
                 print(self.stackNum.peek())
+        elif self.stackOperation.stack.count(8)>0:
+            pass
         else:
             right = self.stackNum.pop()
             left = self.stackNum.pop()
@@ -222,6 +233,8 @@ class MiniLangListener(ParseTreeListener):
                         print("Variable value: ",self.assigned[variable])
                     except:
                         raise Exception(f"The variable {variable} is not defined")
+        elif self.stackOperation.stack.count(8)>0:
+            pass
         else:
             # Esta en una operacion
             if (len(self.stackOperation.stack)>0):
@@ -261,6 +274,8 @@ class MiniLangListener(ParseTreeListener):
                 # Si es una operacion se va a poner en el stack de numeros para operar
                 else:
                     self.stackNum.push(int(ctx.getText()))
+        elif self.stackOperation.stack.count(8)>0:
+            pass
         else:
             # Si solo es una asignacion entonces solo se asigna al valor
             if self.stackOperation.peek() == 0:
@@ -328,6 +343,43 @@ class MiniLangListener(ParseTreeListener):
     # Exit a parse tree produced by MiniLangParser#stmt.
     def exitStmt(self, ctx:MiniLangParser.StmtContext):
         pass
+    
+    # Enter a parse tree produced by MiniLangParser#defunStmt.
+    def enterDefunStmt(self, ctx:MiniLangParser.DefunStmtContext):
+        pass
 
+    # Exit a parse tree produced by MiniLangParser#defunStmt.
+    def exitDefunStmt(self, ctx:MiniLangParser.DefunStmtContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#funStmt.
+    def enterFunStmt(self, ctx:MiniLangParser.FunStmtContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#funStmt.
+    def exitFunStmt(self, ctx:MiniLangParser.FunStmtContext):
+        pass
+# Enter a parse tree produced by MiniLangParser#defFun.
+    def enterDefFun(self, ctx:MiniLangParser.DefFunContext):
+        st = ctx.getText()[3:]
+        st = st.split(":")
+        statement = f'def {st[0]}:\n    {st[1]}'
+        exec(statement)
+        self.stackOperation.push(8)
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#defFun.
+    def exitDefFun(self, ctx:MiniLangParser.DefFunContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#fun.
+    def enterFun(self, ctx:MiniLangParser.FunContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#fun.
+    def exitFun(self, ctx:MiniLangParser.FunContext):
+        pass
 
 del MiniLangParser
