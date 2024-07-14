@@ -18,6 +18,8 @@ class MiniLangListener(ParseTreeListener):
         self.head = None
         self.value = None
         self.assigned = {}
+        self.comparison = None
+        self.string = None
     # Enter a parse tree produced by MiniLangParser#prog.
     def enterProg(self, ctx:MiniLangParser.ProgContext):
         print(ctx.getText())
@@ -95,6 +97,7 @@ class MiniLangListener(ParseTreeListener):
 
     # Exit a parse tree produced by MiniLangParser#comparisonStmt.
     def exitComparisonStmt(self, ctx:MiniLangParser.ComparisonStmtContext):
+        print(self.comparison)
         pass
 
 
@@ -234,10 +237,12 @@ class MiniLangListener(ParseTreeListener):
 
     # Enter a parse tree produced by MiniLangParser#comparison.
     def enterComparison(self, ctx:MiniLangParser.ComparisonContext):
+        self.lastOp = self.stackOperation.push(5)
         pass
 
     # Exit a parse tree produced by MiniLangParser#comparison.
     def exitComparison(self, ctx:MiniLangParser.ComparisonContext):
+        self.comparison = eval(ctx.getText())
         pass
 
 
@@ -274,6 +279,7 @@ class MiniLangListener(ParseTreeListener):
 
     # Exit a parse tree produced by MiniLangParser#string.
     def exitString(self, ctx:MiniLangParser.StringContext):
+        self.string = ctx.getText()
         pass
 
 
