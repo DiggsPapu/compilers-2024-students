@@ -42,14 +42,25 @@ class MiniLangListener(ParseTreeListener):
         self.right = None
         self.left = None
         self.result = None
-        # Asignacion
-        if self.lastOp == 0:
-            print(self.assigned[self.head]," assigned in ",self.head)
-            self.head = None
-        # Operaciones
+        self.lastOp = self.stackOperation.pop()
+        if (self.stackOperation.stack.count(6)>0 or self.stackOperation.stack.count(7))>0:
+            if (self.comparison):
+                # Asignacion
+                if self.lastOp == 0:
+                    print(self.assigned[self.head]," assigned in ",self.head)
+                    self.head = None
+                # Operaciones
+                else:
+                    print("Resultado: ", self.stackNum.pop())
         else:
-            print("Resultado: ", self.stackNum.pop())
-        self.lastOp = None
+            # Asignacion
+            if self.lastOp == 0:
+                print(self.assigned[self.head]," assigned in ",self.head)
+                self.head = None
+            # Operaciones
+            else:
+                print("Resultado: ", self.stackNum.pop())
+            self.lastOp = None
         pass
 
 
@@ -63,12 +74,21 @@ class MiniLangListener(ParseTreeListener):
 
     # Exit a parse tree produced by MiniLangParser#assign.
     def exitAssign(self, ctx:MiniLangParser.AssignContext):
-        # En caso de que sea una operacion se asigna el valor de la operacion a la memoria 
-        if self.lastOp != 0:
-            self.assigned[self.head] = self.stackNum.pop()
-        # En caso de que solo sea una asignacion entonces se le asigna el valor a la memoria
+        if (self.stackOperation.stack.count(6)>0 or self.stackOperation.stack.count(7))>0:
+            if (self.comparison):
+                # En caso de que sea una operacion se asigna el valor de la operacion a la memoria 
+                if self.lastOp != 0:
+                    self.assigned[self.head] = self.stackNum.pop()
+                # En caso de que solo sea una asignacion entonces se le asigna el valor a la memoria
+                else:
+                    self.assigned[self.head] = self.value
         else:
-            self.assigned[self.head] = self.value
+            # En caso de que sea una operacion se asigna el valor de la operacion a la memoria 
+            if self.lastOp != 0:
+                self.assigned[self.head] = self.stackNum.pop()
+            # En caso de que solo sea una asignacion entonces se le asigna el valor a la memoria
+            else:
+                self.assigned[self.head] = self.value
         self.lastOp = self.stackOperation.pop()
         print(self.assigned[self.head]," assigned in ",self.head)
         self.value = None
@@ -116,12 +136,21 @@ class MiniLangListener(ParseTreeListener):
         self.lastOp = self.stackOperation.pop()
         right = self.stackNum.pop()
         left = self.stackNum.pop()
-        # operacion de salida del arbol
-        if self.lastOp == 3:
-            self.stackNum.push( left * right )
-            
-        elif self.lastOp == 4:
-            self.stackNum.push( left / right )
+        if (self.stackOperation.stack.count(6)>0 or self.stackOperation.stack.count(7))>0:
+            if (self.comparison):
+                # operacion de salida del arbol
+                if self.lastOp == 3:
+                    self.stackNum.push( left * right )
+                    
+                elif self.lastOp == 4:
+                    self.stackNum.push( left / right )
+        else:
+            # operacion de salida del arbol
+            if self.lastOp == 3:
+                self.stackNum.push( left * right )
+                
+            elif self.lastOp == 4:
+                self.stackNum.push( left / right )
         pass
 
 
@@ -138,38 +167,71 @@ class MiniLangListener(ParseTreeListener):
         self.lastOp = self.stackOperation.pop()
         right = self.stackNum.pop()
         left = self.stackNum.pop()
-        # operacion de salida del arbol
-        if self.lastOp == 1:
-            self.stackNum.push( left + right )
-            
-        elif self.lastOp == 2:
-            self.stackNum.push( left - right )
+        if (self.stackOperation.stack.count(6)>0 or self.stackOperation.stack.count(7))>0:
+            if (self.comparison):
+                # operacion de salida del arbol
+                if self.lastOp == 1:
+                    self.stackNum.push( left + right )
+                    
+                elif self.lastOp == 2:
+                    self.stackNum.push( left - right )
+        else:
+            # operacion de salida del arbol
+            if self.lastOp == 1:
+                self.stackNum.push( left + right )
+                
+            elif self.lastOp == 2:
+                self.stackNum.push( left - right )
         pass
 
 
     # Enter a parse tree produced by MiniLangParser#id.
     def enterId(self, ctx:MiniLangParser.IdContext):
-        # Esta en una operacion
-        if (len(self.stackOperation.stack)>0):
-            # En caso de que sea una operacion hay que ir a buscar a memoria para ver las variables
-            if self.stackOperation.peek() != 0:
-                # Si no se encuentra la variable entonces se lanza error
-                self.stackNum.push(self.assigned[ctx.getText()])
-            # En caso de que sea una asignacion
-            else:
-                # Si es el nombre de la variable
-                if self.head == None:
-                    self.head = ctx.getText()
+        if (self.stackOperation.stack.count(6)>0 or self.stackOperation.stack.count(7))>0:
+            if (self.comparison):
+                # Esta en una operacion
+                if (len(self.stackOperation.stack)>0):
+                    # En caso de que sea una operacion hay que ir a buscar a memoria para ver las variables
+                    if self.stackOperation.peek() != 0:
+                        # Si no se encuentra la variable entonces se lanza error
+                        self.stackNum.push(self.assigned[ctx.getText()])
+                    # En caso de que sea una asignacion
+                    else:
+                        # Si es el nombre de la variable
+                        if self.head == None:
+                            self.head = ctx.getText()
+                        else:
+                            self.value = ctx.getText()
+                # es un valor ya definido
                 else:
-                    self.value = ctx.getText()
-        # es un valor ya definido
+                    try:
+                        variable = ctx.getText()
+                        self.assigned[variable]
+                        print("Variable value: ",self.assigned[variable])
+                    except:
+                        raise Exception(f"The variable {variable} is not defined")
         else:
-            try:
-                variable = ctx.getText()
-                self.assigned[variable]
-                print("Variable value: ",self.assigned[variable])
-            except:
-                raise Exception(f"The variable {variable} is not defined")
+            # Esta en una operacion
+            if (len(self.stackOperation.stack)>0):
+                # En caso de que sea una operacion hay que ir a buscar a memoria para ver las variables
+                if self.stackOperation.peek() != 0:
+                    # Si no se encuentra la variable entonces se lanza error
+                    self.stackNum.push(self.assigned[ctx.getText()])
+                # En caso de que sea una asignacion
+                else:
+                    # Si es el nombre de la variable
+                    if self.head == None:
+                        self.head = ctx.getText()
+                    else:
+                        self.value = ctx.getText()
+            # es un valor ya definido
+            else:
+                try:
+                    variable = ctx.getText()
+                    self.assigned[variable]
+                    print("Variable value: ",self.assigned[variable])
+                except:
+                    raise Exception(f"The variable {variable} is not defined")
         pass
 
     # Exit a parse tree produced by MiniLangParser#id.
@@ -179,12 +241,21 @@ class MiniLangListener(ParseTreeListener):
 
     # Enter a parse tree produced by MiniLangParser#int.
     def enterInt(self, ctx:MiniLangParser.IntContext):
-        # Si solo es una asignacion entonces solo se asigna al valor
-        if self.stackOperation.peek() == 0:
-            self.value = int(ctx.getText())
-        # Si es una operacion se va a poner en el stack de numeros para operar
+        if (self.stackOperation.stack.count(6)>0 or self.stackOperation.stack.count(7))>0:
+            if (self.comparison):
+                # Si solo es una asignacion entonces solo se asigna al valor
+                if self.stackOperation.peek() == 0:
+                    self.value = int(ctx.getText())
+                # Si es una operacion se va a poner en el stack de numeros para operar
+                else:
+                    self.stackNum.push(int(ctx.getText()))
         else:
-            self.stackNum.push(int(ctx.getText()))
+            # Si solo es una asignacion entonces solo se asigna al valor
+            if self.stackOperation.peek() == 0:
+                self.value = int(ctx.getText())
+            # Si es una operacion se va a poner en el stack de numeros para operar
+            else:
+                self.stackNum.push(int(ctx.getText()))
         pass
 
     # Exit a parse tree produced by MiniLangParser#int.
@@ -212,7 +283,28 @@ class MiniLangListener(ParseTreeListener):
     # Exit a parse tree produced by MiniLangParser#comparation.
     def exitComparation(self, ctx:MiniLangParser.ComparationContext):
         pass
+    
+        # Enter a parse tree produced by MiniLangParser#condStmt.
+    def enterCondStmt(self, ctx:MiniLangParser.CondStmtContext):
+        pass
 
+    # Exit a parse tree produced by MiniLangParser#condStmt.
+    def exitCondStmt(self, ctx:MiniLangParser.CondStmtContext):
+        pass
+    
+    # Enter a parse tree produced by MiniLangParser#stmt.
+    def enterStmt(self, ctx:MiniLangParser.StmtContext):
+        # Indica que tipo de statement es if o while
+        if ctx.getChild(0).getText()=="if":
+            self.stackOperation.push(6)
+        else:
+            self.stackOperation.push(7)
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#stmt.
+    def exitStmt(self, ctx:MiniLangParser.StmtContext):
+        
+        pass
 
 
 del MiniLangParser

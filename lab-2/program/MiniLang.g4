@@ -7,6 +7,7 @@ stat:   expr NEWLINE                 # printExpr
     |   NEWLINE                      # blank
     |   COMMENT NEWLINE              # comment
     |   comparation NEWLINE          # comparisonStmt
+    |   stmt                         # condStmt
     ;
     
 expr:   expr ('*'|'/') expr          # MulDiv
@@ -19,6 +20,8 @@ expr:   expr ('*'|'/') expr          # MulDiv
 comparation: expr COMPARATOR expr
     |   '(' expr COMPARATOR expr ')'
     ;
+
+stmt: ('while'|'if') comparation ':' expr;
 
 COMMENT : '#' ~[\r\n]* ; // define token for comments
 MUL : '*' ; // define token for multiplication
