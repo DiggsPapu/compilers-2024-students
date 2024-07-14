@@ -2,12 +2,13 @@ from Stack import Stack
 # Generated from MiniLang.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
-    from .MiniLangParser import MiniLangParser
+    from MiniLangParser import MiniLangParser
 else:
     from MiniLangParser import MiniLangParser
 
 # This class defines a complete listener for a parse tree produced by MiniLangParser.
 class MiniLangListener(ParseTreeListener):
+        
     def __init__(self):
         self.lastOp = None
         self.right = None
@@ -20,6 +21,7 @@ class MiniLangListener(ParseTreeListener):
         self.assigned = {}
         self.comparison = None
         self.string = None
+    
     # Enter a parse tree produced by MiniLangParser#prog.
     def enterProg(self, ctx:MiniLangParser.ProgContext):
         print(ctx.getText())
@@ -82,60 +84,15 @@ class MiniLangListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by MiniLangParser#commentStmt.
-    def enterCommentStmt(self, ctx:MiniLangParser.CommentStmtContext):
-        pass
-
-    # Exit a parse tree produced by MiniLangParser#commentStmt.
-    def exitCommentStmt(self, ctx:MiniLangParser.CommentStmtContext):
-        pass
-
-
     # Enter a parse tree produced by MiniLangParser#comparisonStmt.
     def enterComparisonStmt(self, ctx:MiniLangParser.ComparisonStmtContext):
+        self.stackOperation.push(5)
         pass
 
     # Exit a parse tree produced by MiniLangParser#comparisonStmt.
     def exitComparisonStmt(self, ctx:MiniLangParser.ComparisonStmtContext):
         print(self.comparison)
         pass
-
-
-    # Enter a parse tree produced by MiniLangParser#defFunStmt.
-    def enterDefFunStmt(self, ctx:MiniLangParser.DefFunStmtContext):
-        pass
-
-    # Exit a parse tree produced by MiniLangParser#defFunStmt.
-    def exitDefFunStmt(self, ctx:MiniLangParser.DefFunStmtContext):
-        pass
-
-
-    # Enter a parse tree produced by MiniLangParser#callFunStmt.
-    def enterCallFunStmt(self, ctx:MiniLangParser.CallFunStmtContext):
-        pass
-
-    # Exit a parse tree produced by MiniLangParser#callFunStmt.
-    def exitCallFunStmt(self, ctx:MiniLangParser.CallFunStmtContext):
-        pass
-
-
-    # Enter a parse tree produced by MiniLangParser#stmt.
-    def enterStmt(self, ctx:MiniLangParser.StmtContext):
-        pass
-
-    # Exit a parse tree produced by MiniLangParser#stmt.
-    def exitStmt(self, ctx:MiniLangParser.StmtContext):
-        pass
-
-
-    # Enter a parse tree produced by MiniLangParser#stringExpr.
-    def enterStringExpr(self, ctx:MiniLangParser.StringExprContext):
-        pass
-
-    # Exit a parse tree produced by MiniLangParser#stringExpr.
-    def exitStringExpr(self, ctx:MiniLangParser.StringExprContext):
-        pass
-
 
     # Enter a parse tree produced by MiniLangParser#parens.
     def enterParens(self, ctx:MiniLangParser.ParensContext):
@@ -235,51 +192,25 @@ class MiniLangListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by MiniLangParser#comparison.
-    def enterComparison(self, ctx:MiniLangParser.ComparisonContext):
-        self.lastOp = self.stackOperation.push(5)
+    # Enter a parse tree produced by MiniLangParser#comment.
+    def enterComment(self, ctx:MiniLangParser.CommentContext):
         pass
 
-    # Exit a parse tree produced by MiniLangParser#comparison.
-    def exitComparison(self, ctx:MiniLangParser.ComparisonContext):
+    # Exit a parse tree produced by MiniLangParser#comment.
+    def exitComment(self, ctx:MiniLangParser.CommentContext):
+        pass
+
+    # Enter a parse tree produced by MiniLangParser#id.
+    def enterId(self, ctx:MiniLangParser.IdContext):
+        pass
+    
+    # Enter a parse tree produced by MiniLangParser#comparation.
+    def enterComparation(self, ctx:MiniLangParser.ComparationContext):
         self.comparison = eval(ctx.getText())
         pass
 
-
-    # Enter a parse tree produced by MiniLangParser#statement.
-    def enterStatement(self, ctx:MiniLangParser.StatementContext):
-        pass
-
-    # Exit a parse tree produced by MiniLangParser#statement.
-    def exitStatement(self, ctx:MiniLangParser.StatementContext):
-        pass
-
-
-    # Enter a parse tree produced by MiniLangParser#defFunction.
-    def enterDefFunction(self, ctx:MiniLangParser.DefFunctionContext):
-        pass
-
-    # Exit a parse tree produced by MiniLangParser#defFunction.
-    def exitDefFunction(self, ctx:MiniLangParser.DefFunctionContext):
-        pass
-
-
-    # Enter a parse tree produced by MiniLangParser#callFunction.
-    def enterCallFunction(self, ctx:MiniLangParser.CallFunctionContext):
-        pass
-
-    # Exit a parse tree produced by MiniLangParser#callFunction.
-    def exitCallFunction(self, ctx:MiniLangParser.CallFunctionContext):
-        pass
-
-
-    # Enter a parse tree produced by MiniLangParser#string.
-    def enterString(self, ctx:MiniLangParser.StringContext):
-        pass
-
-    # Exit a parse tree produced by MiniLangParser#string.
-    def exitString(self, ctx:MiniLangParser.StringContext):
-        self.string = ctx.getText()
+    # Exit a parse tree produced by MiniLangParser#comparation.
+    def exitComparation(self, ctx:MiniLangParser.ComparationContext):
         pass
 
 
