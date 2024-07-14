@@ -5,7 +5,6 @@ if "." in __name__:
     from .MiniLangParser import MiniLangParser
 else:
     from MiniLangParser import MiniLangParser
-# operations 0->assign 1->sum 2->resta 3-> mult 4-> div
 
 # This class defines a complete listener for a parse tree produced by MiniLangParser.
 class MiniLangListener(ParseTreeListener):
@@ -81,6 +80,60 @@ class MiniLangListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by MiniLangParser#commentStmt.
+    def enterCommentStmt(self, ctx:MiniLangParser.CommentStmtContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#commentStmt.
+    def exitCommentStmt(self, ctx:MiniLangParser.CommentStmtContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#comparisonStmt.
+    def enterComparisonStmt(self, ctx:MiniLangParser.ComparisonStmtContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#comparisonStmt.
+    def exitComparisonStmt(self, ctx:MiniLangParser.ComparisonStmtContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#defFunStmt.
+    def enterDefFunStmt(self, ctx:MiniLangParser.DefFunStmtContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#defFunStmt.
+    def exitDefFunStmt(self, ctx:MiniLangParser.DefFunStmtContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#callFunStmt.
+    def enterCallFunStmt(self, ctx:MiniLangParser.CallFunStmtContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#callFunStmt.
+    def exitCallFunStmt(self, ctx:MiniLangParser.CallFunStmtContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#stmt.
+    def enterStmt(self, ctx:MiniLangParser.StmtContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#stmt.
+    def exitStmt(self, ctx:MiniLangParser.StmtContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#stringExpr.
+    def enterStringExpr(self, ctx:MiniLangParser.StringExprContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#stringExpr.
+    def exitStringExpr(self, ctx:MiniLangParser.StringExprContext):
+        pass
+
+
     # Enter a parse tree produced by MiniLangParser#parens.
     def enterParens(self, ctx:MiniLangParser.ParensContext):
         pass
@@ -136,17 +189,27 @@ class MiniLangListener(ParseTreeListener):
 
     # Enter a parse tree produced by MiniLangParser#id.
     def enterId(self, ctx:MiniLangParser.IdContext):
-        # En caso de que sea una operacion hay que ir a buscar a memoria para ver las variables
-        if self.stackOperation.peek() != 0:
-            # Si no se encuentra la variable entonces se lanza error
-            self.stackNum.push(self.assigned[ctx.getText()])
-        # En caso de que sea una asignacion
-        else:
-            # Si es el nombre de la variable
-            if self.head == None:
-                self.head = ctx.getText()
+        # Esta en una operacion
+        if (len(self.stackOperation.stack)>0):
+            # En caso de que sea una operacion hay que ir a buscar a memoria para ver las variables
+            if self.stackOperation.peek() != 0:
+                # Si no se encuentra la variable entonces se lanza error
+                self.stackNum.push(self.assigned[ctx.getText()])
+            # En caso de que sea una asignacion
             else:
-                self.value = ctx.getText()
+                # Si es el nombre de la variable
+                if self.head == None:
+                    self.head = ctx.getText()
+                else:
+                    self.value = ctx.getText()
+        # es un valor ya definido
+        else:
+            try:
+                variable = ctx.getText()
+                self.assigned[variable]
+                print("Variable value: ",self.assigned[variable])
+            except:
+                raise Exception(f"The variable {variable} is not defined")
         pass
 
     # Exit a parse tree produced by MiniLangParser#id.
@@ -167,7 +230,51 @@ class MiniLangListener(ParseTreeListener):
     # Exit a parse tree produced by MiniLangParser#int.
     def exitInt(self, ctx:MiniLangParser.IntContext):
         pass
-        
+
+
+    # Enter a parse tree produced by MiniLangParser#comparison.
+    def enterComparison(self, ctx:MiniLangParser.ComparisonContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#comparison.
+    def exitComparison(self, ctx:MiniLangParser.ComparisonContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#statement.
+    def enterStatement(self, ctx:MiniLangParser.StatementContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#statement.
+    def exitStatement(self, ctx:MiniLangParser.StatementContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#defFunction.
+    def enterDefFunction(self, ctx:MiniLangParser.DefFunctionContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#defFunction.
+    def exitDefFunction(self, ctx:MiniLangParser.DefFunctionContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#callFunction.
+    def enterCallFunction(self, ctx:MiniLangParser.CallFunctionContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#callFunction.
+    def exitCallFunction(self, ctx:MiniLangParser.CallFunctionContext):
+        pass
+
+
+    # Enter a parse tree produced by MiniLangParser#string.
+    def enterString(self, ctx:MiniLangParser.StringContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#string.
+    def exitString(self, ctx:MiniLangParser.StringContext):
+        pass
 
 
 
