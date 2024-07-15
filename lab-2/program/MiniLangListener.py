@@ -182,7 +182,6 @@ class MiniLangListener(ParseTreeListener):
 
     # Exit a parse tree produced by MiniLangParser#AddSub.
     def exitAddSub(self, ctx:MiniLangParser.AddSubContext):
-        self.lastOp = self.stackOperation.pop()
         if (self.stackOperation.stack.count(6)>0 or self.stackOperation.stack.count(7))>0:
             if (self.comparison):
                 right = self.stackNum.pop()
@@ -200,6 +199,7 @@ class MiniLangListener(ParseTreeListener):
             right = self.stackNum.pop()
             left = self.stackNum.pop()
             # operacion de salida del arbol
+            self.lastOp = self.stackOperation.peek()
             if self.lastOp == 1:
                 self.stackNum.push( left + right )
                 
@@ -327,6 +327,8 @@ class MiniLangListener(ParseTreeListener):
             text = values[0]+':\n'
             for index in range(1, len(values)):
                 text+=f' {values[index]}\n'
+            funName = ctx.getChild(1)
+            exec(f'global {funName}')
             exec(text)
         pass
 
@@ -355,6 +357,7 @@ class MiniLangListener(ParseTreeListener):
 
     # Enter a parse tree produced by MiniLangParser#funStmt.
     def enterFunStmt(self, ctx:MiniLangParser.FunStmtContext):
+        value = ctx.getText()
         pass
 
     # Exit a parse tree produced by MiniLangParser#funStmt.
@@ -364,7 +367,8 @@ class MiniLangListener(ParseTreeListener):
     def enterDefFun(self, ctx:MiniLangParser.DefFunContext):
         st = ctx.getText()[3:]
         st = st.split(":")
-        statement = f'def {st[0]}:\n    {st[1]}'
+        name = st[0][0:st[0].index('(')]
+        statement = f'global {name}\ndef {st[0]}:\n    {st[1]}'
         exec(statement)
         self.stackOperation.push(8)
         pass
@@ -376,10 +380,28 @@ class MiniLangListener(ParseTreeListener):
 
     # Enter a parse tree produced by MiniLangParser#fun.
     def enterFun(self, ctx:MiniLangParser.FunContext):
+        print(f"executed: {ctx.getText()}")
+        exec(ctx.getText())
         pass
 
     # Exit a parse tree produced by MiniLangParser#fun.
     def exitFun(self, ctx:MiniLangParser.FunContext):
         pass
+    
+    # Enter a parse tree produced by MiniLangParser#strExp.
+    def enterStrExp(self, ctx:MiniLangParser.StrExpContext):
+        self.stackNum.push(ctx.getText().replace("\"",""))
+        pass
 
+    # Exit a parse tree produced by MiniLangParser#strExp.
+    def exitStrExp(self, ctx:MiniLangParser.StrExpContext):
+        pass
+    
+    # Enter a parse tree produced by MiniLangParser#string.
+    def enterString(self, ctx:MiniLangParser.StringContext):
+        pass
+
+    # Exit a parse tree produced by MiniLangParser#string.
+    def exitString(self, ctx:MiniLangParser.StringContext):
+        pass
 del MiniLangParser

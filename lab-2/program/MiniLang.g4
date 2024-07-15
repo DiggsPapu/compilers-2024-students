@@ -8,7 +8,7 @@ stat:   expr NEWLINE                 # printExpr
     |   COMMENT NEWLINE              # comment
     |   comparation NEWLINE          # comparisonStmt
     |   stmt                         # condStmt
-    |   defFun NEWLINE               # defunStmt
+    |   defFun                       # defunStmt
     |   fun                          # funStmt
     ;
     
@@ -17,6 +17,7 @@ expr:   expr ('*'|'/') expr          # MulDiv
     |   INT                          # int
     |   ID                           # id
     |   '(' expr ')'                 # parens
+    |   string                       # strExp
     ;
 
 comparation: expr COMPARATOR expr
@@ -26,10 +27,13 @@ comparation: expr COMPARATOR expr
 stmt: ('while'|'if') comparation ':' stat
     ;
 
-defFun: 'def' expr '(' ID ( ',' ID )* ')' ':' stat
+defFun: 'def' (ID+ (INT|ID)*) '(' (ID+ (INT|ID)*)? ( ',' (ID+ (INT|ID)*) )* ')' ':' stat
     ;
 
-fun: expr '(' ID ( ',' ID )* ')'
+fun: (ID+ (INT|ID)*) '(' (ID+ (INT|ID)*)? ( ',' (ID+ (INT|ID)*) )* ')'
+    ;
+
+string: '"' (ID|INT|MUL|WS|DIV|ADD|SUB|COMPARATOR)* '"'
     ;
 
 COMMENT : '#' ~[\r\n]* ; // define token for comments
