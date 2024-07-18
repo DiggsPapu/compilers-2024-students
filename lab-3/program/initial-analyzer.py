@@ -1,10 +1,10 @@
 import sys
 from antlr4 import *
-from gen.ConfRoomSchedulerLexer import ConfRoomSchedulerLexer
-from gen.ConfRoomSchedulerParser import ConfRoomSchedulerParser
+from ConfRoomSchedulerLexer import ConfRoomSchedulerLexer
+from ConfRoomSchedulerParser import ConfRoomSchedulerParser
 
 def main():
-    input_stream = FileStream(sys.argv[1])
+    input_stream = FileStream('/home/diggspapu/compilers-2024-students/lab-3/program/test.confroomdsl')
     lexer = ConfRoomSchedulerLexer(input_stream)
     stream = CommonTokenStream(lexer)
     parser = ConfRoomSchedulerParser(stream)
