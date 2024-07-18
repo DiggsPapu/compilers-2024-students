@@ -94,6 +94,12 @@ class ConfRoomSchedulerParser ( Parser ):
             if hasattr( listener, "exitProg" ):
                 listener.exitProg(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitProg" ):
+                return visitor.visitProg(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -159,6 +165,12 @@ class ConfRoomSchedulerParser ( Parser ):
             if hasattr( listener, "exitBlank" ):
                 listener.exitBlank(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitBlank" ):
+                return visitor.visitBlank(self)
+            else:
+                return visitor.visitChildren(self)
+
 
     class ReserveStatContext(StatContext):
 
@@ -180,6 +192,12 @@ class ConfRoomSchedulerParser ( Parser ):
             if hasattr( listener, "exitReserveStat" ):
                 listener.exitReserveStat(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitReserveStat" ):
+                return visitor.visitReserveStat(self)
+            else:
+                return visitor.visitChildren(self)
+
 
     class CancelStatContext(StatContext):
 
@@ -200,6 +218,12 @@ class ConfRoomSchedulerParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitCancelStat" ):
                 listener.exitCancelStat(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitCancelStat" ):
+                return visitor.visitCancelStat(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -275,6 +299,12 @@ class ConfRoomSchedulerParser ( Parser ):
             if hasattr( listener, "exitReserve" ):
                 listener.exitReserve(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitReserve" ):
+                return visitor.visitReserve(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -338,6 +368,12 @@ class ConfRoomSchedulerParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitCancel" ):
                 listener.exitCancel(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitCancel" ):
+                return visitor.visitCancel(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
