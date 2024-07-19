@@ -76,11 +76,12 @@ class ConfRoomSchedulerVisitor(ParseTreeVisitor):
             datetime.datetime(year=int(date[2]),month=int(date[1]),day=int(date[0]),hour=int(initTime[0]),minute=int(initTime[1])), 
             datetime.datetime(year=int(date[2]),month=int(date[1]),day=int(date[0]),hour=int(finTime[0]),minute=int(finTime[1]))
             )
+        # Check si existe la reservacion para la persona
         reservations = self.reservations.get(person)
         if reservations != None:
             for index in range(0, len(reservations)):
                 posRes = reservations[index]
-                val = posRes.isThisReservation(reservation)
+                # Misma reservacion
                 if posRes.isThisReservation(reservation):    
                     if self.cancelations.get(person)==None:
                         self.cancelations[person] = [self.reservations[person].pop(index)]
