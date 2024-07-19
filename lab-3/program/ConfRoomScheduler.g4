@@ -7,7 +7,7 @@ stat: reserve NEWLINE                # reserveStat
     | NEWLINE                        # blank
     ;
 
-reserve: 'RESERVAR' ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME ; 
+reserve: 'RESERVAR' ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME ('DESCRIPCION:' (ID ' ')+)?; 
 
 cancel: 'CANCELAR' ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME ; 
 
