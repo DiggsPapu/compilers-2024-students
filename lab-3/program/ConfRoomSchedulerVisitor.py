@@ -41,11 +41,15 @@ class ConfRoomSchedulerVisitor(ParseTreeVisitor):
         date = ctx.DATE().getText().split("/")
         initTime = ctx.TIME(0).getText().split(":")
         finTime = ctx.TIME(1).getText().split(":")
+        description = None
+        if ctx.getChildCount()==11:
+            description = ctx.getChild(10).getText()
         reservation = Reservation(
             meetRoom,
             person, 
             datetime.datetime(year=int(date[2]),month=int(date[1]),day=int(date[0]),hour=int(initTime[0]),minute=int(initTime[1])), 
-            datetime.datetime(year=int(date[2]),month=int(date[1]),day=int(date[0]),hour=int(finTime[0]),minute=int(finTime[1]))
+            datetime.datetime(year=int(date[2]),month=int(date[1]),day=int(date[0]),hour=int(finTime[0]),minute=int(finTime[1])),
+            description
             )
         # Person is the ID
         # time restriction
