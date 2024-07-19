@@ -32,6 +32,17 @@ class ConfRoomSchedulerVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by ConfRoomSchedulerParser#blank.
     def visitBlank(self, ctx:ConfRoomSchedulerParser.BlankContext):
         return self.visitChildren(ctx)
+    
+    
+    # Visit a parse tree produced by ConfRoomSchedulerParser#listStat.
+    def visitListStat(self, ctx:ConfRoomSchedulerParser.ListStatContext):
+        keys = self.reservations.keys()
+        for key in keys:
+            reservations = self.reservations[key]
+            for index in range(0,len(reservations)):
+                reservation = reservations[index]
+                print(f"reservation #{index}:\n     meeting room: {reservation.meetingRoom}\n     person: {reservation.person}\n    time: {reservation.initTime}-{reservation.finTime}\n    description: {reservation.description}")
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ConfRoomSchedulerParser#reserve.

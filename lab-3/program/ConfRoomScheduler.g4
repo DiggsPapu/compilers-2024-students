@@ -5,6 +5,7 @@ prog: stat+ ;
 stat: reserve NEWLINE                # reserveStat
     | cancel NEWLINE                 # cancelStat
     | NEWLINE                        # blank
+    | 'LIST'                         # listStat
     ;
 
 reserve: 'RESERVAR' ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME (description)?; 

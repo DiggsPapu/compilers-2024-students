@@ -5,7 +5,7 @@ class Reservation():
         self.person = person
         self.initTime = initTime
         self.finTime = finTime
-        self.desctiption = description
+        self.description = description
     def isThisReservation(self, reservation):
         
         return  reservation.meetingRoom == self.meetingRoom \
