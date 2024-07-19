@@ -48,7 +48,18 @@ class ConfRoomSchedulerVisitor(ParseTreeVisitor):
             datetime.datetime(year=int(date[2]),month=int(date[1]),day=int(date[0]),hour=int(finTime[0]),minute=int(finTime[1]))
             )
         # Person is the ID
-        self.reservations[person] = [reservation] if self.reservations.get(person) == None else self.reservations[person].append(reservation)
+        reservations = self.reservations.get(person)
+        if reservations == None:
+            print(f"Made reservation: {ctx.getText()}")
+            self.reservations[person] = [reservation] 
+        else:
+            # Check availability
+            for posRes in reservations:
+                if datetime.timedelta(0) <= posRes.finTime-posRes.initTime <= reservation.finTime-reservation.initTime:
+                    print(f"impossible to make reservation: {ctx.getText()}")
+                else: 
+                    print(f"Made reservation: {ctx.getText()}")
+                    self.reservations[person].append(reservation)
         return self.visitChildren(ctx)
 
 
