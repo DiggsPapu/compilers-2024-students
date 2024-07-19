@@ -51,24 +51,28 @@ class ConfRoomSchedulerVisitor(ParseTreeVisitor):
             datetime.datetime(year=int(date[2]),month=int(date[1]),day=int(date[0]),hour=int(finTime[0]),minute=int(finTime[1])),
             description
             )
-        # Person is the ID
-        # time restriction
-        if datetime.timedelta(hours=0)<=reservation.finTime-reservation.initTime<=datetime.timedelta(hours=5):
-            reservations = self.reservations.get(person)
-            if reservations == None:
-                print(f"Made reservation: {ctx.getText()}")
-                self.reservations[person] = [reservation] 
+        rangeHours = reservation.finTime-reservation.initTime
+        if rangeHours>datetime.timedelta(hours=0):
+            # Person is the ID
+            # time restriction
+            if datetime.timedelta(hours=0)<rangeHours<=datetime.timedelta(hours=5):
+                reservations = self.reservations.get(person)
+                if reservations == None:
+                    print(f"Made reservation: {ctx.getText()}")
+                    self.reservations[person] = [reservation] 
+                else:
+                    # Check availability
+                    for posRes in reservations:
+                        if datetime.timedelta(0) <= posRes.finTime-posRes.initTime <= reservation.finTime-reservation.initTime:
+                            print(f"Can't make reservation (not availability): {ctx.getText()}")
+                        else: 
+                            print(f"Made reservation: {ctx.getText()}")
+                            self.reservations[person].append(reservation)
             else:
-                # Check availability
-                for posRes in reservations:
-                    if datetime.timedelta(0) <= posRes.finTime-posRes.initTime <= reservation.finTime-reservation.initTime:
-                        print(f"Can't make reservation (not availability): {ctx.getText()}")
-                    else: 
-                        print(f"Made reservation: {ctx.getText()}")
-                        self.reservations[person].append(reservation)
+                print(f"Can't make reservation (reservation more than 5 hours long): {ctx.getText()}")
         else:
-            print(f"Can't make reservation (reservation too long or doesn't make sense): {ctx.getText()}")
-            return self.visitChildren(ctx)
+            print(f"Can't make reservation (reservation hours doesn't make sense): {ctx.getText()}")
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ConfRoomSchedulerParser#cancel.
