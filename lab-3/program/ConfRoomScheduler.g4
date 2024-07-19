@@ -7,9 +7,11 @@ stat: reserve NEWLINE                # reserveStat
     | NEWLINE                        # blank
     ;
 
-reserve: 'RESERVAR' ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME ('DESCRIPCION:' (ID ' ')+)?; 
+reserve: 'RESERVAR' ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME (description)?; 
 
 cancel: 'CANCELAR' ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME ; 
+
+description: 'DESCRIPCION:' (ID)+;
 
 DATE: DIGIT DIGIT '/' DIGIT DIGIT '/' DIGIT DIGIT DIGIT DIGIT ;
 TIME: DIGIT DIGIT ':' DIGIT DIGIT ;

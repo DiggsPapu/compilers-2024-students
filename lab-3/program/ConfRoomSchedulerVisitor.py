@@ -92,6 +92,10 @@ class ConfRoomSchedulerVisitor(ParseTreeVisitor):
                     else:
                         self.cancelations[person].append(self.reservations[person].pop(index)) 
         return self.visitChildren(ctx)
+    
+    # Visit a parse tree produced by ConfRoomSchedulerParser#description.
+    def visitDescription(self, ctx:ConfRoomSchedulerParser.DescriptionContext):
+        return self.visitChildren(ctx)
 
 
 
