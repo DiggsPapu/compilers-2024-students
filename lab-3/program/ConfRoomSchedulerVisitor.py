@@ -53,7 +53,7 @@ class ConfRoomSchedulerVisitor(ParseTreeVisitor):
             )
         # Person is the ID
         # time restriction
-        if reservation.finTime-reservation.initTime<=datetime.timedelta(hours=5):
+        if datetime.timedelta(hours=0)<=reservation.finTime-reservation.initTime<=datetime.timedelta(hours=5):
             reservations = self.reservations.get(person)
             if reservations == None:
                 print(f"Made reservation: {ctx.getText()}")
@@ -67,7 +67,7 @@ class ConfRoomSchedulerVisitor(ParseTreeVisitor):
                         print(f"Made reservation: {ctx.getText()}")
                         self.reservations[person].append(reservation)
         else:
-            print(f"Can't make reservation (reservation too long): {ctx.getText()}")
+            print(f"Can't make reservation (reservation too long or doesn't make sense): {ctx.getText()}")
             return self.visitChildren(ctx)
 
 
@@ -95,6 +95,7 @@ class ConfRoomSchedulerVisitor(ParseTreeVisitor):
                         self.cancelations[person] = [self.reservations[person].pop(index)]
                     else:
                         self.cancelations[person].append(self.reservations[person].pop(index)) 
+                    print(f'Cancel reservation: {ctx.getText()}')
         return self.visitChildren(ctx)
     
     # Visit a parse tree produced by ConfRoomSchedulerParser#description.
