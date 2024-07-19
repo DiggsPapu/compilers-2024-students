@@ -12,6 +12,10 @@ def main():
     print(tree.toStringTree(recog=parser))
     visitor = ConfRoomSchedulerVisitor()
     visitor.visit(tree)
+    print("reservations:")
+    print(visitor.reservations)
+    print("cancelations:")
+    print(visitor.cancelations)
 
 if __name__ == '__main__':
     main()
