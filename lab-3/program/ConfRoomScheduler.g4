@@ -4,15 +4,20 @@ prog: stat+ ;
 
 stat: reserve NEWLINE                # reserveStat
     | cancel NEWLINE                 # cancelStat
+    | reschedule NEWLINE             # rescheduleStat
     | NEWLINE                        # blank
     | 'LIST'                         # listStat
     ;
 
-reserve: 'RESERVAR' ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME (description)?; 
+reserve: 'RESERVAR' roomType ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME (description)?; 
 
-cancel: 'CANCELAR' ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME ; 
+cancel: 'CANCELAR' roomType ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME ; 
+
+reschedule: 'REPROGRAMAR' roomType ID 'PARA' ID 'PARA' DATE 'DE' TIME 'A' TIME 'A' DATE 'DE' TIME 'A' TIME ;
 
 description: 'DESCRIPCION:' (ID)+;
+
+roomType: 'JUNTAS' | 'CAPACITACION' ;  // Add other types as needed
 
 DATE: DIGIT DIGIT '/' DIGIT DIGIT '/' DIGIT DIGIT DIGIT DIGIT ;
 TIME: DIGIT DIGIT ':' DIGIT DIGIT ;
